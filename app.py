@@ -1,28 +1,24 @@
-from flask import Flask, jsonify, request
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 from deep_translator import GoogleTranslator
+from fastapi.responses import JSONResponse
 
-app = Flask(__name__)
+# Create the FastAPI app instance
+app = FastAPI()
 
-@app.route('/',methods = ["GET"])
-def home():
-    return jsonify({"message": "Welcome to my Flask API on Hugging Face Spaces!"})
+# Root endpoint
+@app.get("/")
+async def home():
+    return {"message": "Welcome to my FastAPI API on Hugging Face Spaces!"}
 
-@app.route('/translate', methods=['POST'])
-def translate():
-    # Get the 'text' parameter from the JSON body
-    data = request.get_json()
-    text = data.get('text', '')
-    
+# Translate endpoint that accepts a query parameter 'text'
+@app.get("/translate")
+async def translate(text: str = ""):
     if not text:
-        return jsonify({"error": "No text provided"}), 400
+        raise HTTPException(status_code=400, detail="No text provided")
     
-    # Perform translation
+    # Perform translation using deep_translator
     translator = GoogleTranslator(source="auto", target="mr")
     result = translator.translate(text)
     
-    return jsonify({"result": result})
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=7860)
-
+    return {"result": result}
