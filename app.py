@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from deep_translator import GoogleTranslator
 from fastapi.responses import JSONResponse
-
+from main import final_output
 # Create the FastAPI app instance
 app = FastAPI()
 
@@ -22,3 +22,12 @@ async def translate(text: str = ""):
     result = translator.translate(text)
     
     return {"result": result}
+
+@app.get("/chatobot")
+async def chatbot(text: str = ""):
+    if not text:
+        raise HTTPException(status_code=400, detail="No text provided")
+    # Perform translation using deep_translator
+    result = final_output(query=text)
+    return {"result": result}
+

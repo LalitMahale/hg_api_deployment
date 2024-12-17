@@ -27,6 +27,19 @@ def process(query):
 
     print(data[result[0][0]])
 
+def final_output(query):
+    with open("answer.pkl","rb") as f:
+        data = pickle.load(f)
+
+    print(len(data))
+
+    result = VectorStore().get_similary_search(query=query)
+
+    print("Result ",result)
+
+    result = data[result[0][0]]
+
+    return random.choice(result)
 
 
 if __name__ == "__main__":
